@@ -1,8 +1,11 @@
+import imp
 from statistics import mode
+from xmlrpc.client import boolean
 from django.db import models
 
 import datetime
 from django.utils import timezone
+from django.contrib import admin
 
 # Create your models here.
 class Question(models.Model):
@@ -12,11 +15,17 @@ class Question(models.Model):
     def was_published_recently(self):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
     """
+    @admin.display(
+        boolean=True,
+        ordering='pub_date',
+        description='published recently?'
+    )
     def was_published_recently(self):
         now = timezone.now()
         return now - datetime.timedelta(days=1) <= self.pub_date <= now
     def __str__(self):
         return self.question_text
+    
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
